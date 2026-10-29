@@ -18,7 +18,7 @@
 | :---: | :--- | :---: |
 | 01 | [Introduction & Exam Guide Breakdown](modules/01-introduction-and-exam-guide.md) | 🔲 Placeholder |
 | 02 | [Introduction to DevOps](modules/02-introduction-to-devops.md) | ✅ Complete |
-| 03 | [Azure Boards Deep Dive](modules/03-azure-boards-deep-dive.md) | 🔄 In Progress |
+| 03 | [Azure Boards Deep Dive](modules/03-azure-boards-deep-dive.md) | ✅ Complete |
 | 04 | [Collaboration & Communication](modules/04-collaboration-and-communication.md) | 🔲 Placeholder |
 | 05 | [GitHub Fundamentals & Architecture](modules/05-github-fundamentals.md) | 🔲 Placeholder |
 | 06 | [GitHub Development Tools & Authentication](modules/06-github-dev-tools-and-auth.md) | 🔲 Placeholder |

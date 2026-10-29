@@ -420,7 +420,95 @@
 > - Queries using the macro `@CurrentIteration` dynamically evaluate to whatever sprint is currently active based on today's calendar date, avoiding the need to edit queries every 2 weeks.
 
 #### Connect Azure Boards to GitHub
-*Awaiting slide content / screenshot...*
+
+##### 1. Slide Transcript (As-Is)
+> **Azure DevOps Engineer Expert**  
+> **Azure Boards**  
+> **Connect Azure Boards to GitHub** *(Follow Along)*
+
+##### 2. Visual Reference
+![Connect Azure Boards to GitHub Title](../images/03-connect-azure-boards-to-github-title.png)
+
+##### 3. Expert-Level Deep Dive & Practical Notes
+
+- **Why Connect Azure Boards to GitHub?**:
+  - Many organizations choose a **hybrid DevOps model**: using **GitHub** for developer-friendly source control and PR reviews, combined with **Azure Boards** for enterprise-grade agile project management, capacity planning, and compliance traceability.
+  - Connecting them enables:
+    - Automatically linking GitHub Commits, Branches, and Pull Requests to Azure Boards Work Items.
+    - Moving work item states directly from GitHub PR merges (e.g. `Fixes AB#42`).
+    - Viewing real-time GitHub development activity inside the Azure Boards work item form.
+
+```mermaid
+flowchart LR
+    Dev[Developer] -->|git push with AB#42| GH[GitHub Repo]
+    GH -->|Webhook / GitHub App| Boards[Azure Boards Work Item #42]
+    Boards -->|Links Shown in UI| DevPane[Development Widget: Commits & PRs]
+    GH -->|Merge PR 'Fixes AB#42'| AutoClose[Auto-Transition State to Closed/Done]
+```
 
 ---
+
+- **Connection Methods: GitHub App vs Personal Access Token (OAuth)**:
+
+  | Feature / Criterion | **Azure Boards GitHub App (Recommended)** | **Personal Access Token (PAT / OAuth)** |
+  | :--- | :--- | :--- |
+  | **Setup Location** | GitHub Marketplace / Organization | Azure DevOps Project Settings |
+  | **Scope of Access** | Granular repository-level selection | User-level token scope |
+  | **Authentication Lifecycle** | Managed by GitHub App identity (No expiring secrets) | Bound to a user account; breaks if user leaves or PAT expires |
+  | **Scale** | Can connect up to **250 GitHub repositories** per Azure Boards connection | Subject to rate limits & single-account tokens |
+  | **Enterprise Compliance** | Audited by GitHub Organization administrators | Harder to govern across large teams |
+
+---
+
+- **Step-by-Step Guide: Adding GitHub Connection via Project Settings**:
+
+  1. **Navigate to Project Settings**:
+     - In your Azure DevOps project (e.g., `examprotest`), click the **Project Settings** gear icon in the lower-left corner.
+  2. **Open GitHub Connections**:
+     - Under the **Boards** section in the settings menu, select **GitHub connections**.
+  3. **Initiate Connection**:
+     - Click **Connect your GitHub account** (or **+ New connection**).
+  4. **Authenticate & Authorize**:
+     - Select authentication method:
+       - **GitHub App** (Recommended) or **Personal Access Token (PAT)**.
+       - Sign in with your GitHub credentials and authorize the Azure Boards application.
+  5. **Select Target Repositories**:
+     - Choose either **All repositories** or **Only select repositories** (e.g., `gittent/Azure-Devops-AZ400`).
+     - Click **Save**.
+  6. **Verification**:
+     - The connected repositories appear in the GitHub connections list with status `Connected`.
+
+---
+
+- **Using the Integration: Linking Commits, Branches & PRs**:
+
+  - **1. Linking via Commit Message (`AB#<ID>`)**:
+    - Include the work item ID prefixed with `AB#` in your Git commit message:
+      ```bash
+      git commit -m "Implement OAuth login controller AB#105"
+      ```
+    - The commit automatically displays in work item `#105` under the **Development** section.
+
+  - **2. Auto-Closing / Transitioning Work Items on PR Merge**:
+    - Use state transition keywords before the `AB#` mention in the PR description or commit:
+      - `fix AB#105`, `fixes AB#105`, `fixed AB#105`
+      - `close AB#105`, `closes AB#105`, `closed AB#105`
+      - `resolve AB#105`, `resolves AB#105`, `resolved AB#105`
+    - When the PR is merged into the default branch (e.g. `main`), Azure Boards automatically moves work item `#105` to the **Done** or **Closed** state category.
+
+  - **3. Linking Branches**:
+    - Create a branch mentioning the ID, or link from the work item UI under **Development $\rightarrow$ Add link $\rightarrow$ GitHub Branch**.
+
+---
+
+- **Troubleshooting Common Connection Issues**:
+  - **Commit not showing in Boards**:
+    - Ensure the GitHub account email matches an email recognized in Azure DevOps, or verify that the repository was explicitly selected in the GitHub Connection settings.
+  - **Work item did not close upon PR merge**:
+    - Auto-transition only occurs when merging into the repository's **default branch** (`main`/`master`). Merges into feature branches do not trigger the close action.
+
+> [!TIP]
+> **AZ-400 Exam Tip**:
+> - The **Azure Boards app from the GitHub Marketplace** is the officially recommended approach for enterprise integrations because it is repository-scoped, does not depend on individual user credentials, and supports up to 250 repositories per connection.
+> - Memorize the syntax: **`AB#ID`** (e.g., `AB#1234`). Keywords like `Fixes AB#1234` only transition the work item state when the Pull Request is **merged into the default branch**.
 *(Sections 04 through 21 initialized in Table of Contents)*
