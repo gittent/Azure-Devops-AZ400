@@ -229,10 +229,195 @@
 > - If external clients or executives only need to **monitor progress, view Kanban boards, and create feedback work items**, assign them **Stakeholder** access to save license costs.
 
 #### Create Work Items
-*Awaiting slide content / screenshot...*
+
+##### 1. Slide Transcript (As-Is)
+> **Azure DevOps Engineer Expert**  
+> **Azure Boards**  
+> **Create work items** *(Follow Along)*
+
+##### 2. Visual Reference
+![Create Work Items Title](../images/03-create-work-items-title.png)
+
+##### 3. Expert-Level Deep Dive & Practical Notes
+
+- **Work Item Hierarchy (Agile process shown; names vary by process)**:
+  ```mermaid
+  graph TD
+      Epic[Epic] --> Feature[Feature]
+      Feature --> Story["User Story (Agile) / Issue (Basic) / PBI (Scrum)"]
+      Story --> Task[Task]
+      Story --> Bug[Bug]
+  ```
+
+  | Process | Hierarchy (top → bottom) |
+  | :--- | :--- |
+  | **Basic** | Epic → **Issue** → Task |
+  | **Agile** | Epic → Feature → User Story → Task (Bug alongside Story) |
+  | **Scrum** | Epic → Feature → Product Backlog Item → Task (Bug alongside PBI) |
+  | **CMMI** | Epic → Feature → Requirement → Task (Bug, Change Request, Risk, Issue…) |
+
+  > The user's project (`Basic` process) uses **Epic → Issue → Task**.
+
+- **Step-by-Step: Create Work Items in the UI**:
+  1. Go to **Boards → Work items → + New Work Item**, pick the type (Epic / Issue / Task). *Or* use **Boards → Boards** and click **+ New item** on a column.
+  2. **Epic**: enter a title (e.g., `Launch Customer Portal`) → **Save**. Represents a large business initiative spanning multiple sprints.
+  3. **Issue**: enter a title (e.g., `User can sign in with SSO`) → open the work item → **Add link → Existing item → Parent** → choose the Epic.
+  4. **Task**: from the Issue, **Add link → New item → Task** (e.g., `Configure Entra ID app registration`). Tasks are the actual units of work assigned to a person, with `Remaining Work` hours.
+  5. Set **Assigned To**, **State** (`To Do → Doing → Done`), **Area**, and **Iteration** (sprint).
+  6. Use **Backlogs** view and drag-drop to re-parent items or reorder priority.
+
+- **Key Fields**:
+  | Field | Purpose |
+  | :--- | :--- |
+  | `Title` | Short summary (required) |
+  | `Assigned To` | Owner |
+  | `State` | Workflow status (To Do / Doing / Done in Basic) |
+  | `Area Path` | Team / product-area ownership |
+  | `Iteration Path` | Sprint / time-box |
+  | `Description` / `Acceptance Criteria` | Definition of done |
+  | `Remaining Work` / `Effort` / `Story Points` | Estimation |
+  | `Tags` | Free-form filtering |
+
+- **CLI Automation**:
+  ```bash
+  az boards work-item create --type Epic  --title "Launch Customer Portal" \
+    --org https://dev.azure.com/exampro1 --project examprotest
+
+  az boards work-item create --type Issue --title "User can sign in with SSO" \
+    --org https://dev.azure.com/exampro1 --project examprotest
+
+  az boards work-item create --type Task  --title "Configure Entra ID app registration" \
+    --assigned-to "dev@company.com" \
+    --org https://dev.azure.com/exampro1 --project examprotest
+
+  # Link child to parent (relation: parent/child)
+  az boards work-item relation add --id <TASK_ID> \
+    --relation-type parent --target-id <ISSUE_ID>
+  ```
+
+- **Linking to Code**: reference `AB#<ID>` in commit messages / PR descriptions to auto-link (see *Traceability*).
+
+> [!TIP]
+> **AZ-400 Exam Tip**: The **Basic** process has only *Epic, Issue, Task*. Agile uses *User Story*, Scrum uses *Product Backlog Item*, CMMI uses *Requirement*. Know which process maps to which type name.
+
 
 #### Create a Sprint
-*Awaiting slide content / screenshot...*
+
+##### 1. Slide Transcript (As-Is)
+> **Azure DevOps Engineer Expert**  
+> **Azure Boards**  
+> **Create a sprint** *(Follow Along)*
+
+##### 2. Visual Reference
+![Create a Sprint Title](../images/03-create-a-sprint-title.png)
+
+##### 3. Expert-Level Deep Dive & Practical Notes
+
+- **Sprints & Iteration Paths Concept**:
+  - In Azure Boards, **Sprints** are represented through **Iteration Paths** (hierarchical time-boxes).
+  - Iteration paths define the cadence of work (e.g., 2-week iterations) and feed into sprint-level analytics such as **Sprint Burndown**, **Team Velocity**, and **Capacity Planning**.
+  - Iteration structure:
+    ```
+    Project Root (examprotest)
+    └── Iteration
+        ├── Sprint 1 (Start: 2026-11-01, End: 2026-11-14)
+        ├── Sprint 2 (Start: 2026-11-15, End: 2026-11-28)
+        └── Sprint 3 (Start: 2026-11-29, End: 2026-12-12)
+    ```
+
+---
+
+- **1. How to Create and Schedule Sprints (Iterations)**:
+  - **Method A: Via Project Settings (Global Iterations Definition)**:
+    1. Navigate to **Project Settings** (bottom-left gear icon) $\rightarrow$ **Project configuration** $\rightarrow$ **Iterations**.
+    2. Click **+ New child iteration**.
+    3. Enter the **Iteration name** (e.g., `Sprint 1`).
+    4. Set **Start date** and **End date** (typically 1 to 4 weeks cadence) $\rightarrow$ Click **Save and close**.
+  - **Method B: Directly from Boards / Sprints View**:
+    1. Go to **Boards $\rightarrow$ Sprints**.
+    2. Click the Sprint selector dropdown at the top $\rightarrow$ Select **+ New Sprint**.
+    3. Name the sprint, select dates, and assign to the target team.
+
+---
+
+- **2. Configuring the Team's Active Sprints & Working Days**:
+  - Defined iterations must be selected by each team to show on their sprint backlog.
+  - **Team Iteration Selection**:
+    1. Navigate to **Project Settings $\rightarrow$ Team configuration $\rightarrow$ Iterations**.
+    2. Click **+ Select iterations** $\rightarrow$ Check the sprints that this team will execute.
+    3. Set the **Default iteration** (e.g., `@CurrentIteration` so new items created on the board default to active sprint).
+  - **Working Days & Capacity Configuration**:
+    1. In **Project Settings $\rightarrow$ Team configuration $\rightarrow$ Working days**, select active days (e.g., Monday through Friday).
+    2. In **Boards $\rightarrow$ Sprints $\rightarrow$ Capacity** tab:
+       - Allocate hours per day per activity (e.g., *Development: 6 hrs/day*, *Testing: 2 hrs/day*) for each team member.
+       - Add individual days off / holidays to calculate true sprint capacity.
+
+---
+
+- **3. Adding Work Items to a Sprint**:
+  - **Method 1: Drag and Drop from Backlog**:
+    - Go to **Boards $\rightarrow$ Backlogs**.
+    - In the View Options panel (gear/slider icon), turn on **Planning pane**.
+    - Drag User Stories / Issues / Tasks directly from the product backlog into the target Sprint card in the Planning panel.
+  - **Method 2: Directly Assign Iteration Path**:
+    - Open any Work Item (Epic, Issue, User Story, Task).
+    - In the **Iteration** field dropdown, select the sprint path (e.g., `examprotest\Sprint 1`) $\rightarrow$ Click **Save**.
+  - **Method 3: Create Directly inside Sprint Taskboard**:
+    - Go to **Boards $\rightarrow$ Sprints $\rightarrow$ Taskboard**.
+    - Click **+ New item** directly under the sprint view to add a task tied to the active iteration.
+
+---
+
+- **4. Deleting or Renaming Sprints**:
+  - **Renaming / Changing Dates**:
+    - Go to **Project Settings $\rightarrow$ Project configuration $\rightarrow$ Iterations** $\rightarrow$ Click the `...` menu on the sprint $\rightarrow$ **Edit**. Adjust name or date range.
+  - **Deleting a Sprint (Iteration Path)**:
+    - Go to **Project Settings $\rightarrow$ Project configuration $\rightarrow$ Iterations**.
+    - Click the `...` context menu next to the target sprint $\rightarrow$ Select **Delete**.
+    - **Reassigning Work Items Prompt**:
+      - Azure DevOps will require choosing an alternate Iteration Path to move existing work items into (e.g., move items back to root project iteration or to the next sprint).
+      - *Safety check*: Work items are not lost; they are safely re-parented to the selected path.
+  - **Removing a Sprint from a Team's Board (without deleting project-wide)**:
+    - Go to **Project Settings $\rightarrow$ Team configuration $\rightarrow$ Iterations**.
+    - Click `...` next to the sprint $\rightarrow$ **Remove**. The sprint still exists in the project configuration, but is hidden from this team's backlog.
+
+---
+
+- **CLI Automation (`az devops / az boards`)**:
+  ```bash
+  # 1. Create a new project iteration (Sprint) with dates
+  az boards iteration project create \
+    --name "Sprint 1" \
+    --start-date "2026-11-01" \
+    --finish-date "2026-11-14" \
+    --project "examprotest" \
+    --organization "https://dev.azure.com/exampro1"
+
+  # 2. List all iterations in the project
+  az boards iteration project list \
+    --project "examprotest" \
+    --organization "https://dev.azure.com/exampro1" \
+    --output table
+
+  # 3. Assign an existing work item to a sprint
+  az boards work-item update \
+    --id 42 \
+    --iteration "examprotest\\Sprint 1" \
+    --organization "https://dev.azure.com/exampro1"
+
+  # 4. Delete an iteration path
+  az boards iteration project delete \
+    --id <ITERATION_PATH_ID> \
+    --project "examprotest" \
+    --organization "https://dev.azure.com/exampro1" \
+    --yes
+  ```
+
+> [!TIP]
+> **AZ-400 Exam Tip - Iteration vs Area Paths**:
+> - **Area Paths** represent *who* owns the feature or *what* component/microservice the work relates to (logical grouping).
+> - **Iteration Paths** represent *when* the work is scheduled to be delivered (temporal grouping).
+> - Queries using the macro `@CurrentIteration` dynamically evaluate to whatever sprint is currently active based on today's calendar date, avoiding the need to edit queries every 2 weeks.
 
 #### Connect Azure Boards to GitHub
 *Awaiting slide content / screenshot...*
