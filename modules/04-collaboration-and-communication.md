@@ -480,7 +480,119 @@ flowchart TD
 > - Attaching documentation as a **Pipeline Build Artifact** guarantees that release notes are immutably tied to the exact compiled binaries and commit SHA that were deployed.
 
 ### API Documentation
-*Awaiting slide content / screenshot...*
+
+#### 1. Slide Transcripts (As-Is)
+
+##### Part 1: Introduction
+> **Azure DevOps Engineer Expert**  
+> **Collaboration and Communication**  
+> **API documentation**
+
+##### Part 2: Steps to Generate API Documentation
+> **API documentation**  
+> *Cheat sheets, Practice Exams and Flash cards 👉 www.exampro.co/az-400*
+>
+> **Steps to Generate API Documentation:**
+> - **Generate Documentation:**
+>   - Utilize **Visual Studio** to generate **API documentation**. Access this feature via the **Build** menu.
+>   - Use tools like **Swagger, Azure API Management, or OpenAPI** for automatic documentation generation from your codebase.
+> - **Documenting Endpoints:**
+>   - Clearly define and describe each **API endpoint**, detailing the purpose and functionality.
+>   - Include information on request and response formats, as well as any **authentication** requirements.
+> - **Selecting Formats and Styles:**
+>   - Decide on your **output** format and style, ensuring it's readable and accessible for your target audience.
+> - **Integration and Automation:**
+>   - Integrate documentation generation into your **continuous integration and deployment pipelines** within Azure DevOps.
+>
+> *(UI Callout: Sample API Documentation in Markdown/JSON for Version 1.2.3: POST /api/login endpoint with request body username/password and 200 OK response with JWT token; GET /api/users endpoint retrieving list of users).*
+
+##### Part 3: Best Practices for API Documentation
+> **API documentation**  
+> *Cheat sheets, Practice Exams and Flash cards 👉 www.exampro.co/az-400*
+>
+> **Best Practices for API Documentation:**
+> - **Consistency:** Use a consistent format for all **API endpoints** to make the documentation easy to follow.
+> - **Clarity:** Ensure that descriptions are clear and concise, avoiding ambiguity.
+> - **Version Control:** Manage your API documentation within **Azure Repos** for versioning and historical tracking.
+> - **Regular Updates:** Keep the documentation current with every release, deprecating outdated information promptly.
+> - **Feedback Mechanisms:** Include a process for developers and users to provide **feedback** on the documentation for continuous improvement.
+>
+> *By focusing on these elements, your API documentation will be an invaluable resource for your team and stakeholders, supporting the effective use and integration of your software's API.*
+
+---
+
+#### 2. Visual References
+
+![API Documentation Title](../images/04-api-documentation-title.png)
+
+![API Documentation Generation Steps](../images/04-api-documentation-generation-steps.png)
+
+![API Documentation Best Practices](../images/04-api-documentation-best-practices.png)
+
+---
+
+#### 3. Expert-Level Deep Dive & Practical Notes
+
+- **The OpenAPI (Swagger) Specification Standard**:
+  - In modern RESTful systems, API documentation is generated directly from code annotations/attributes (**Code-First**) or drafted before coding (**API-First / Contract-First**).
+  - Framework integrations:
+    - **ASP.NET Core**: `Swashbuckle.AspNetCore` or `NSwag` extracts XML doc comments and controller attributes (`[ProducesResponseType]`, `[HttpPost]`) to generate a runtime `swagger.json`.
+    - **Node.js/Express**: `tsoa` or `swagger-jsdoc` with JSDoc annotations.
+    - **FastAPI / Python**: Auto-generates interactive Swagger UI (`/docs`) and ReDoc (`/redoc`) at runtime via Pydantic models.
+
+```mermaid
+flowchart LR
+    Code["API Source Code<br/>(C# / Node.js / Python)"] --> Build["CI Pipeline Build<br/>(az pipelines)"]
+    Build --> GenSpec["Generate openapi.json<br/>(Swashbuckle / CLI)"]
+    GenSpec --> APIM["Deploy to Azure API Management<br/>(Developer Portal)"]
+    GenSpec --> StaticDocs["Static HTML/Markdown Docs<br/>(Redoc / Swagger UI / Wiki)"]
+    StaticDocs --> Devs["Internal & External Consumers"]
+```
+
+---
+
+- **Automated API Documentation in Azure Pipelines**:
+  - To prevent documentation drift, generating OpenAPI definitions must be part of CI validation:
+
+  ```yaml
+  # Sample CI Pipeline task generating OpenAPI spec during build
+  - stage: BuildAndDoc
+    jobs:
+    - job: GenerateAPIDocs
+      steps:
+      - task: DotNetCoreCLI@2
+        displayName: 'Build Solution'
+        inputs:
+          command: 'build'
+          projects: '**/*.csproj'
+          arguments: '--configuration Release'
+
+      # Generate OpenAPI specification file using dotnet swagger CLI
+      - script: |
+          dotnet tool install --global Swashbuckle.AspNetCore.Cli
+          swagger tofile --output $(Build.ArtifactStagingDirectory)/swagger.json $(Build.BinariesDirectory)/MyApi.dll v1
+        displayName: 'Extract OpenAPI Specification'
+
+      # Publish generated OpenAPI spec as build artifact
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)/swagger.json'
+          ArtifactName: 'api-specification'
+  ```
+
+---
+
+- **Azure API Management (APIM) Developer Portal (AZ-400 Architecture)**:
+  - Enterprise systems publish APIs to **Azure API Management**.
+  - **Features**:
+    - **Automated Ingestion**: APIM can automatically import OpenAPI/Swagger specifications via CI/CD pipelines (`az apim api import`).
+    - **Developer Portal**: Provides a customizable, self-service web portal where developers can read API reference docs, obtain API subscription keys, and test live calls directly in the browser via an interactive console.
+    - **Versioning & Revisions**: Manages non-breaking revisions and breaking versions (`v1`, `v2`) with deprecation alerts.
+
+> [!TIP]
+> **AZ-400 Exam Tip**:
+> - Always automate API specification extraction within the **CI Build Pipeline** to avoid "doc drift".
+> - When asked how to provide a secure, interactive documentation catalog with subscription key management and rate-limiting policies for external or partner developers, select **Azure API Management (APIM) Developer Portal**.
 
 ### Automate Git History Documentation
 *Awaiting slide content / screenshot...*
