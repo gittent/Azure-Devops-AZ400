@@ -135,7 +135,136 @@ graph TD
 ---
 
 ### Wikis for Documentation
-*Awaiting slide content / screenshot...*
+
+#### 1. Slide Transcripts (As-Is)
+
+##### Part 1: Overview & Project Requirements
+> **Wiki for Documentation**  
+> *Cheat sheets, Practice Exams and Flash cards 👉 www.exampro.co/az-400*
+>
+> **Wiki offers a collaborative space for team members to compile and share crucial details about a DevOps project.**
+>
+> **Start with an Overview Page:**  
+> Begin by setting up an **overview page**. This should introduce the **project, its goals, and the team working** on it.  
+> Mention the **technologies, tools, and methods your project** employs, keeping it broad but informative.
+>
+> *(UI Callout: Example 'Project Overview' containing Welcome message, Team Members list [Alex Johnson - Project Manager, Jamie Doe - Lead Developer, Chris Smith - QA Engineer, Jordan Lee - UI/UX Designer], and Technologies & Tools [Frontend: React.js/Redux, Backend: Node.js/Express, Database: MongoDB, CI/CD: Jenkins/Azure Pipelines, Version Control: Git/Azure Repos]).*
+>
+> **Detail Project Requirements:**  
+> Dedicate pages to outline the **project's requirements**.  
+> Break down what the project **needs to do (functional requirements)** and how it should perform **(non-functional requirements)**, using clear and achievable language.  
+> Add **user stories**, what needs to be true for the project to be considered complete **(acceptance criteria)**, and any other elements that rely on each other **(dependencies)**.
+>
+> *(UI Callout: Example 'Project Requirements' containing Functional Requirements [create account, edit profile], Non-Functional Requirements [load within 3 seconds, data protection compliance], User Stories, Acceptance Criteria, and Dependencies).*
+
+##### Part 2: Architecture & Collaborative Input
+> **Wiki for Documentation**  
+> *Cheat sheets, Practice Exams and Flash cards 👉 www.exampro.co/az-400*
+>
+> **Architecture and Design Documentation:**  
+> Use the wiki to detail the **project's structure and design**. Make a separate page for each part, whether it's **a component, a larger section, or a service**.  
+> To help visualize how these parts interact, include diagrams like **UML (Unified Modeling Language)** or system architecture sketches.
+>
+> *(UI Callout: Example 'Architecture and Design' containing Overview of microservices architecture, User Service breakdown [responsibilities, Node.js/JWT], Email Service breakdown [SendGrid, Azure Functions]).*
+>
+> **Encourage Team Input:**  
+> Get your team involved in the documentation process.  
+> Allowing everyone to **edit and update wiki pages** not only promotes teamwork but also helps keep the information **current**.  
+> Make sure to use the wiki's version tracking to monitor changes and roll back if needed.
+>
+> *(UI Callout: Example 'Collaborative Content Creation' covering editing instructions, commit messages, and Version Tracking to view change history and revert).*
+
+##### Part 3: Live Markdown Editor Interface
+> **Azure DevOps Services Portal — Wiki Editor Walkthrough**  
+> **Path**: `Overview -> Wiki -> Example Wiki Markdown` (`dev.azure.com/exampro1/examprotest`)  
+> - **Dual-Pane View**: Split editor with Raw Markdown on the left and Live Rendered HTML Preview on the right.  
+> - **Formatting Toolbar**: Bold, Italics, Strikethrough, Headings (H1/H2/H3), Bulleted/Numbered Lists, Checklists, Blockquotes, Code blocks, Tables, Links, and Image uploads.  
+> - **Version Tracking & Actions**: Page revisions, Clone wiki, Print, and Link to work items.
+
+---
+
+#### 2. Visual References
+
+![Wiki for Documentation Overview & Requirements](../images/04-wikis-for-documentation-part1.png)
+
+![Wiki Architecture and Collaborative Editing](../images/04-wikis-for-documentation-part2.png)
+
+![Azure DevOps Live Wiki Markdown Editor](../images/04-wikis-markdown-editor-live-preview.png)
+
+---
+
+#### 3. Expert-Level Deep Dive & Practical Notes
+
+- **Project Wiki vs. Publish Code as Wiki (AZ-400 Core Knowledge)**:
+  - In Azure DevOps, there are **two distinct types** of Wikis. Understanding the architectural differences between them is one of the most frequently tested concepts on the AZ-400 exam:
+
+  | Architectural Capability | **Project Wiki** (Built-in Provisioned Wiki) | **Publish Code as Wiki** (Git Repository Wiki) |
+  | :--- | :--- | :--- |
+  | **Storage Mechanism** | Hidden backend Git repo managed internally by Azure DevOps | Standard Git repository (or subfolder, e.g. `/docs`) inside Azure Repos |
+  | **Branch Policies & PR Workflow** | ❌ No PRs; changes committed directly to main wiki branch | ✅ Full PR support, branch protection, peer code review policies |
+  | **Multi-Version / Branching Documentation** | ❌ Single version only | ✅ Multi-version (publish separate docs per release branch e.g. `v1.0`, `v2.0`) |
+  | **Local IDE Offline Editing** | Cloned via special hidden Git URL | Standard Git clone (`git clone`) with VS Code / Markdown editors |
+  | **Max Page Limit & Hierarchy** | Up to 1 GB repo size; sub-pages reordered via drag-and-drop | Defined by folder structure and `.order` metadata files |
+  | **Auditing & History** | Revision history visible in portal | Full `git log`, blame, and commit SHAs |
+
+```mermaid
+flowchart TD
+    subgraph Options ["Azure DevOps Wiki Deployment Options"]
+        PW["1. Create Project Wiki<br/>(Ad-hoc, team collaboration, quick notes)"]
+        CW["2. Publish Code as Wiki<br/>(Docs-as-Code, PR-gated, versioned docs)"]
+    end
+
+    PW --> PWHidden["Hidden Git Repo<br/>No Branch Policies<br/>Direct Online Editing"]
+    CW --> CWGit["Standard Azure Repo (/docs)<br/>Enforce Branch Policies & PRs<br/>Versioned per Git Release Branch"]
+```
+
+---
+
+- **Publishing Code as Wiki (Docs-as-Code Workflow)**:
+  1. Store markdown documentation directly in your application codebase under a `/docs` directory.
+  2. In Azure DevOps, navigate to **Overview $\rightarrow$ Wiki**.
+  3. Click the dropdown next to the wiki name $\rightarrow$ select **Publish code as wiki**.
+  4. Select the **Repository**, the target **Branch** (e.g. `main`), and the **Folder** (`/docs`).
+  5. Provide a Wiki name $\rightarrow$ click **Publish**.
+  6. *Benefit*: Developers update documentation in the same Pull Request that modifies source code, ensuring docs never drift out of sync with code releases.
+
+---
+
+- **Ordering Pages via `.order` Files**:
+  - In a Code Wiki, pages are ordered alphabetically by default.
+  - To specify custom ordering, create a text file named `.order` inside the folder and list the file names (without `.md` extension) in desired display order:
+    ```
+    Project-Overview
+    Architecture-and-Design
+    API-Contracts
+    Deployment-Guide
+    ```
+
+---
+
+- **Advanced Markdown Features in Azure DevOps Wiki**:
+  - **Work Item Referencing**: Typing `#<ID>` (e.g., `#105`) embeds a live interactive chip showing the work item title, type, and current state.
+  - **Mentioning Users**: Typing `@<User>` sends an automated notification to that team member.
+  - **Mermaid Diagrams**: Native rendering inside fenced code blocks:
+    ````markdown
+    ```mermaid
+    sequenceDiagram
+        Client->>AuthService: POST /oauth/token
+        AuthService-->>Client: JWT Bearer Token
+    ```
+    ````
+  - **Table of Contents Generation**: Adding `[[_TOC_]]` at the top of a page automatically builds an interactive TOC based on markdown headings.
+  - **Active Work Item Query Results**: Embed dynamic query results using the query syntax:
+    ```markdown
+    ::: query-table <Query-GUID>
+    :::
+    ```
+
+> [!TIP]
+> **AZ-400 Exam Tip**:
+> - If an exam scenario requires **peer review, branch policies, or versioning documentation alongside release branches (e.g. v1 vs v2 docs)**, the correct answer is always **"Publish code as wiki"** pointing to an Azure Repos Git branch.
+> - To enforce custom page order in a published code wiki, use a **`.order`** file.
+> - `[[_TOC_]]` generates a table of contents automatically.
 
 ### Process Diagrams for Documentation
 *Awaiting slide content / screenshot...*
