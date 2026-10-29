@@ -267,10 +267,217 @@ flowchart TD
 > - `[[_TOC_]]` generates a table of contents automatically.
 
 ### Process Diagrams for Documentation
-*Awaiting slide content / screenshot...*
+
+#### 1. Slide Transcripts (As-Is)
+
+##### Part 1: Introduction
+> **Azure DevOps Engineer Expert**  
+> **Collaboration and Communication**  
+> **Process Diagrams for Documentation**
+
+##### Part 2: Essential Processes, Flowcharts, BPMN & Diagramming Tools
+> **Process Diagrams for Documentation**  
+> *Cheat sheets, Practice Exams and Flash cards 👉 www.exampro.co/az-400*
+>
+> **Process diagrams are visual guides that show the steps in a process, making it easier to see how everything connects, especially in DevOps projects.**
+>
+> **Pinpoint Essential Processes:**  
+> First, identify the main processes in your DevOps project, such as **managing source code, integrating changes continuously, testing automatically, deploying, and monitoring**.  
+> Break down these processes into smaller parts.
+>
+> **Make Flowcharts or BPMN Diagrams:**  
+> Use software like **Microsoft Visio, draw.io, or lucidchart**, to create diagrams that map out the process.  
+> These diagrams should clearly show where the process starts and ends, include **decision-making points**, and outline the steps in order.
+>
+> *(UI Callout: Icons for Microsoft Visio, draw.io, and Lucidchart; Example Flowchart showing: Ticket/Email Submitted by Customer $\rightarrow$ Support Case Created & Assigned $\rightarrow$ Decision: During STD Business Hours? [Yes: Alerts sent to Support team to respond; No: Alerts sent to on-call Technician to respond] $\rightarrow$ Decision: Is ticket assigned? $\rightarrow$ Ticket reviewed based on priority $\rightarrow$ Decision: Was issue resolved? $\rightarrow$ Ticket closed & system sends follow-up email $\rightarrow$ End).*
+
+##### Part 3: Inputs, Outputs & Responsibility
+> **Process Diagrams for Documentation**  
+> *Cheat sheets, Practice Exams and Flash cards 👉 www.exampro.co/az-400*
+>
+> **Detail What Goes In and Comes Out:**  
+> For every step in your process, note down what you need to **start (inputs)** and what you expect to get **out of it (outputs)**.  
+> This might be **code, test results, deployment packages**, or anything else relevant. It's important to show how each step is linked to the next.
+>
+> *(UI Callout: Example Flowchart: Email or phone call from customer $\rightarrow$ Check FAQ $\rightarrow$ Info available? [Yes: Reply according to FAQ $\rightarrow$ Answer customer; No: Contact manager $\rightarrow$ Manager provides answer $\rightarrow$ Add answer to FAQ $\rightarrow$ Reply according to FAQ]).*
+>
+> **Clarify Who Does What:**  
+> Make sure your diagrams indicate **who is responsible for each step**.  
+> This removes confusion and makes sure everyone knows their responsibilities.
+
+---
+
+#### 2. Visual References
+
+![Process Diagrams Title](../images/04-process-diagrams-title.png)
+
+![Process Diagrams Flowcharts & Tools](../images/04-process-diagrams-flowcharts-tools.png)
+
+![Process Diagrams Inputs, Outputs & Roles](../images/04-process-diagrams-inputs-outputs-roles.png)
+
+---
+
+#### 3. Expert-Level Deep Dive & Practical Notes
+
+- **Diagramming Paradigms in Enterprise DevOps**:
+  - **BPMN (Business Process Model and Notation)**: Focuses on business-level flows, approvals, SLAs, and handoffs between departments.
+  - **UML Activity & Sequence Diagrams**: Focuses on runtime service-to-service communication, API invocation contracts, and exception flows.
+  - **Diagrams-as-Code (Mermaid / PlantUML)**: Preferred in modern DevOps repositories because diagrams live in Markdown, versioned in Git alongside source code, and reviewed via Pull Requests.
+
+```mermaid
+flowchart TD
+    subgraph Inputs ["1. Inputs"]
+        Code[Git Commit / PR]
+        Config[App Config / Secrets]
+    end
+
+    subgraph ProcessFlow ["2. Automated CI/CD Pipeline (Process)"]
+        Build[Compile & Lint]
+        Test{Unit Tests & SAST Pass?}
+        Package[Package Container / Artifact]
+        Deploy[Deploy to Staging Slot]
+        Gate{Automated Smoke Tests & Approval?}
+        Prod[Swap to Production Slot]
+    end
+
+    subgraph Outputs ["3. Outputs & Responsible Roles"]
+        Artifact[Drop Artifact / Container Image]
+        Telemetry[Application Insights Metrics]
+        Roles["Responsible: DevOps Engineers & Platform Team"]
+    end
+
+    Code --> Build
+    Config --> Build
+    Build --> Test
+    Test -- Yes --> Package
+    Test -- No --> Fail[Fail Pipeline & Alert Author]
+    Package --> Deploy
+    Deploy --> Gate
+    Gate -- Approved --> Prod
+    Gate -- Rejected --> Rollback[Abort & Revert]
+    Package --> Artifact
+    Prod --> Telemetry
+```
+
+- **Tooling Comparison**:
+  | Tool | Type | Integration with Azure DevOps |
+  | :--- | :--- | :--- |
+  | **Mermaid.js** | Diagram-as-Code | Native zero-install rendering in Azure DevOps Wikis and GitHub Markdown files. |
+  | **draw.io (diagrams.net)** | Visual Drag & Drop | Azure DevOps Marketplace extension allows editing `.drawio` files directly in repos. |
+  | **Microsoft Visio** | Enterprise Visual Tooling | Deep Microsoft 365 / SharePoint integration; exportable as SVG/PNG for Wiki embedding. |
+  | **Lucidchart** | Cloud Collaborative Canvas | Embeddable interactive canvas widgets in Azure DevOps dashboards and wikis. |
+
+> [!TIP]
+> **AZ-400 Exam Tip**: Prefer **Diagrams-as-Code (Mermaid/Markdown)** for architectural and pipeline process diagrams because they avoid binary blob merge conflicts in Git and ensure documentation evolves with the code via Pull Requests.
+
+---
 
 ### Configure Release Documentation
-*Awaiting slide content / screenshot...*
+
+#### 1. Slide Transcripts (As-Is)
+
+##### Part 1: Introduction
+> **Azure DevOps Engineer Expert**  
+> **Collaboration and Communication**  
+> **Configure release documentation**
+
+##### Part 2: Key Elements of Release Documentation
+> **Configure release documentation**  
+> *Cheat sheets, Practice Exams and Flash cards 👉 www.exampro.co/az-400*
+>
+> **Release documentation is a cornerstone for the successful deployment of software releases within Azure DevOps, focusing on the non-code aspects that define the scope, quality, and functionality of the release.**
+>
+> **Key Elements of Release Documentation:**
+> 1. **Release Notes**: These should highlight what's **new**, what **issues have been resolved**, and any **enhancements made**, as well as outline any **modifications to settings** and their effects on existing features.
+> 2. **Installation Guides**: Provide clear, detailed instructions for the **setup process**, including a list of required **software and system prerequisites**, and post-installation actions.
+> 3. **Configuration Changes**: Document updates to **configuration settings**, clarifying any default settings and essential changes.
+> 4. **Change Log**: Keep an accurate record of **commits or work items** in the release, using a consistent tracking method.
+> 5. **Rollback Plan**: Have a clear, predefined plan for **reverting to an earlier software version** if necessary.
+
+##### Part 3: Creating Release Documentation in Azure DevOps
+> **Configure release documentation**  
+> *Cheat sheets, Practice Exams and Flash cards 👉 www.exampro.co/az-400*
+>
+> **Creating Release Documentation in Azure DevOps:**
+> - **Azure Repos**:
+>   - Store your **markdown or text files** alongside your code.
+>   - **Version control** your documentation for consistency and traceability.
+> - **Azure Pipelines**:
+>   - Automate the generation of **changelogs** and other documentation during the build and release processes.
+> - **Artifacts**:
+>   - Attach generated documentation to specific **builds or releases as downloadable artifacts**.
+> - **Wiki**:
+>   - Utilize the built-in **Wiki** to share detailed guides and notes with the team and stakeholders.
+>
+> *(UI Callout: Code snippet of markdown release notes showing `# Release Notes - Version 2.1.0`, `## New Features`, `## Enhancements`, `## Configuration Changes`, `## Known Issues`, `## Rollback Plan`, and `For installation guidance, please refer to the [Installation Guide](link-to-guide)`).*
+
+---
+
+#### 2. Visual References
+
+![Configure Release Documentation Title](../images/04-configure-release-documentation-title.png)
+
+![Key Elements of Release Documentation](../images/04-configure-release-documentation-key-elements.png)
+
+![Creating Release Documentation in Azure DevOps](../images/04-configure-release-documentation-azure-devops-tools.png)
+
+---
+
+#### 3. Expert-Level Deep Dive & Practical Notes
+
+- **The 5 Pillars of Release Documentation**:
+  ```mermaid
+  graph TD
+      ReleaseDoc[Release Documentation Package] --> RN[1. Release Notes: New Features, Bugfixes & Breaking Changes]
+      ReleaseDoc --> IG[2. Installation & Upgrade Guides: Prerequisites & Post-deploy verification]
+      ReleaseDoc --> CC[3. Configuration Changes: Env vars, Feature Flags & DB Migrations]
+      ReleaseDoc --> CL[4. Changelog: Git commit SHAs & linked Azure Boards Work Items]
+      ReleaseDoc --> RB[5. Rollback Plan: Deployment slot swap-back, DB restore & fallback steps]
+  ```
+
+---
+
+- **Automating Changelog and Release Notes Generation in Azure Pipelines**:
+  - In modern CI/CD, manual release note authoring causes human error and missed commits.
+  - Azure Pipelines can automatically harvest work items and commits linked to a release:
+
+  ```yaml
+  # Sample Azure Pipeline stage generating and publishing Release Notes
+  stages:
+  - stage: BuildAndDocument
+    jobs:
+    - job: BuildJob
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      - checkout: self
+        fetchDepth: 0
+
+      # 1. Generate release notes from Git commits & Conventional Commits
+      - script: |
+          echo "## Release Notes - $(Build.BuildNumber)" > $(Build.ArtifactStagingDirectory)/RELEASE_NOTES.md
+          echo "Generated on: $(date)" >> $(Build.ArtifactStagingDirectory)/RELEASE_NOTES.md
+          echo "" >> $(Build.ArtifactStagingDirectory)/RELEASE_NOTES.md
+          echo "### Commits in this Release:" >> $(Build.ArtifactStagingDirectory)/RELEASE_NOTES.md
+          git log $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD --oneline >> $(Build.ArtifactStagingDirectory)/RELEASE_NOTES.md
+        displayName: 'Generate Changelog'
+
+      # 2. Publish documentation as pipeline artifact
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)/RELEASE_NOTES.md'
+          ArtifactName: 'release-documentation'
+          publishLocation: 'Container'
+  ```
+
+- **Automated Work Item Release Annotations (Azure DevOps Native Release Notes)**:
+  - In Classic & YAML Multi-Stage Pipelines, checking **"Report deployment status to Boards"** on deployment jobs automatically links the deployed release pipeline run ID and commit SHA directly to all associated work items.
+  - Third-party extensions such as **XplatGenerateReleaseNotes** or **GitReleaseManager** extract all linked `AB#` work items, issues, and PR descriptions to dynamically construct markdown release notes.
+
+> [!TIP]
+> **AZ-400 Exam Tip**:
+> - A comprehensive release package must contain a **Rollback Plan** and **Configuration Changes / DB Migration instructions**, not just feature descriptions.
+> - Attaching documentation as a **Pipeline Build Artifact** guarantees that release notes are immutably tied to the exact compiled binaries and commit SHA that were deployed.
 
 ### API Documentation
 *Awaiting slide content / screenshot...*
